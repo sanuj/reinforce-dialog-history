@@ -3,7 +3,7 @@ import json
 from parlai.core.params import ParlaiParser
 from parlai.tasks.light_dialog.agents import DefaultTeacher
 
-SPLIT = 'valid'
+SPLIT = 'train'
 BASE_DIR = '.'
 
 parser = ParlaiParser(True, True, 'Evaluate a model')
@@ -87,6 +87,8 @@ def main():
 	dialogs = []
 
 	for i, episode in enumerate(teacher.episodes):
+		if i%2 == 0:
+			continue
 		dialog = {'objects': [], 'conv': []}
 		for j, step in enumerate(episode):
 			if j == 0:
@@ -95,7 +97,8 @@ def main():
 			extractTurn(dialog['conv'][-1], step)
 		dialogs.append(dialog)
 
-	with open(os.path.join(BASE_DIR, SPLIT + '.json'), 'w') as outfile:
+	with open(os.path.join(BASE_DIR, SPLIT + '_half.json'), 'w') as outfile:
+		print('total', len(dialogs))
 		json.dump(dialogs, outfile)
 
 if __name__ == '__main__':
